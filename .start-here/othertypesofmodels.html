@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Design Your Own Base LLM from Scratch - Other LLM Architectures</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <header class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-center text-blue-700 mb-4">
+                How to Design Your Own Base LLM from Scratch
+            </h1>
+            <p class="text-lg text-center text-gray-600">
+                A comprehensive guide to understanding and building large language models from the ground up.
+            </p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="w-full max-w-4xl flex flex-col lg:flex-row gap-8">
+            <!-- Table of Contents / Navigation -->
+            <nav class="lg:w-1/4 bg-white shadow-lg rounded-xl p-6 sticky top-8 h-fit">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Table of Contents</h2>
+                <ul class="space-y-3">
+                    <li><a href="densemodel.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">1. Introduction to LLMs</a></li>
+                    <li><a href="data_collection.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2. Data Collection and Preprocessing</a></li>
+                    <li><a href="tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.5. Tokenization</a></li>
+                    <li><a href="train_tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.6. Training Your Tokenizer</a></li>
+                    <li><a href="model_architecture.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3. Model Architecture Design</a></li>
+                    <li><a href="othertypesofmodels.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3.5. Other LLM Architectures</a></li>
+                    <li><a href="training.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">4. Training Your LLM</a></li>
+                    <li><a href="evaluation.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">5. Evaluation and Fine-tuning</a></li>
+                    <li><a href="deployment.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">6. Deployment Considerations</a></li>
+                    <li><a href="conclusion.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">7. Conclusion</a></li>
+                </ul>
+            </nav>
+
+            <!-- Content Sections -->
+            <div class="lg:w-3/4 space-y-8">
+                <!-- Navigation Buttons (Top) -->
+                <div class="flex justify-between items-center mb-6">
+                    <a href="model_architecture.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="training.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- Section 3.5: Other LLM Architectures -->
+                <section id="other-architectures" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">3.5. Other LLM Architectures</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        While GPT-2 style models focus on a decoder-only architecture for generative tasks, the Transformer family encompasses other powerful configurations suitable for different natural language processing (NLP) tasks. Understanding these variations will broaden your perspective on LLM design.
+                    </p>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">3.5.1 Encoder-Only Models (e.g., BERT, RoBERTa)</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Encoder-only Transformers are designed for understanding and encoding text. They excel at tasks where the goal is to derive a rich representation of the input text, rather than generating new text.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Architecture:</strong> Consists solely of the Transformer's encoder blocks. Each encoder block contains a multi-head self-attention mechanism (unmasked) and a feed-forward network. The key is that each token can attend to all other tokens in the input sequence, both to its left and right.</li>
+                        <li><strong>Training Objective:</strong> Typically trained using self-supervised objectives that encourage bidirectional understanding:
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>Masked Language Modeling (MLM):</strong> Randomly masks a percentage of tokens (e.g., 15%) in the input sequence and trains the model to predict the original masked tokens based on their surrounding context (both left and right). This forces the model to learn deep contextual representations.</li>
+                                <li><strong>Next Sentence Prediction (NSP):</strong> Given two sentences (A and B), the model predicts whether B logically follows A in the original document. This helps the model understand relationships between sentences and document structure. (Note: RoBERTa and later models often find NSP less critical and sometimes omit it.)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Fine-tuning:</strong> After pre-training, a small task-specific head (e.g., a linear layer for classification) is added on top of the encoder, and the entire model is fine-tuned on labeled data for the specific downstream task.</li>
+                        <li><strong>Use Cases:</strong> Ideal for tasks requiring deep understanding of text, such as:
+                            <ul class="list-circle list-inside ml-6">
+                                <li>Text Classification (sentiment analysis, spam detection, topic labeling)</li>
+                                <li>Named Entity Recognition (NER) - identifying and classifying named entities (e.g., persons, organizations, locations)</li>
+                                <li>Question Answering (extractive QA) - finding the answer span directly within a given text passage</li>
+                                <li>Text Summarization (extractive) - selecting and concatenating important sentences from the original text</li>
+                                <li>Semantic Similarity/Paraphrase Detection</li>
+                            </ul>
+                        </li>
+                        <li><strong>Examples:</strong> BERT (Bidirectional Encoder Representations from Transformers), RoBERTa (Optimized BERT), ALBERT (A Lite BERT), ELECTRA (Efficiently Learning an Encoder that Classifies Token Replacements Accurately).</li>
+                    </ul>
+                    <div class="bg-gray-100 p-4 rounded-lg text-sm text-gray-600 italic mb-4">
+                        <strong>Key Difference:</strong> Encoder-only models are "bidirectional," meaning they can utilize context from both sides of a token. This makes them exceptionally strong for understanding tasks where the full context is available upfront.
+                    </div>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">3.5.2 Encoder-Decoder Models (e.g., T5, BART)</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Encoder-decoder Transformers, also known as sequence-to-sequence (Seq2Seq) models, are designed for tasks that involve transforming an input sequence into a different output sequence. They combine the strengths of both encoder and decoder components, making them highly versatile.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Architecture:</strong> Consists of two main, interconnected parts:
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>Encoder:</strong> Processes the input sequence bidirectionally (like an encoder-only model), generating a rich contextual representation of the input.</li>
+                                <li><strong>Decoder:</strong> Generates the output sequence autoregressively (token by token), attending to both its own previously generated outputs (masked self-attention) and the encoder's output (via a cross-attention mechanism). This cross-attention allows the decoder to "look back" at the encoded input representation.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Training Objective:</strong> Often trained on a variety of denoising objectives, where the model learns to reconstruct corrupted input text. A prominent example is T5's "Text-to-Text" framework, which casts all NLP problems as text-to-text tasks (e.g., for translation, input is "translate English to German: [sentence]", output is "[translated sentence]"). This unified approach allows for training on diverse tasks.</li>
+                        <li><strong>Use Cases:</strong> Perfect for tasks where an input sequence needs to be transformed into a new, distinct output sequence, such as:
+                            <ul class="list-circle list-inside ml-6">
+                                <li>Machine Translation (e.g., English to French)</li>
+                                <li>Text Summarization (abstractive) - generating a concise summary that may not directly use sentences from the original text</li>
+                                <li>Question Answering (generative) - generating a natural language answer to a question, rather than just extracting it</li>
+                                <li>Text Style Transfer (e.g., formal to informal)</li>
+                                <li>Code Generation (from natural language descriptions)</li>
+                                <li>Dialogue Generation</li>
+                            </ul>
+                        </li>
+                        <li><strong>Examples:</strong> T5 (Text-To-Text Transfer Transformer), BART (Bidirectional and Auto-Regressive Transformers), Pegasus, NLLB (No Language Left Behind).</li>
+                    </ul>
+                    <div class="bg-gray-100 p-4 rounded-lg text-sm text-gray-600 italic mb-4">
+                        <strong>Key Difference:</strong> Encoder-decoder models are highly versatile for tasks where the input and output sequences are distinct and require complex transformation. The encoder focuses on understanding the input, and the decoder focuses on generating the output based on that understanding.
+                    </div>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">3.5.3 Mixture-of-Experts (MoE) Models (e.g., Switch Transformer, Mixtral)</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Mixture-of-Experts (MoE) models offer a way to scale up model capacity without proportionally increasing computational cost. They achieve this by conditionally activating only a subset of the model's parameters for each input.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Architecture:</strong> Instead of a single large Feed-Forward Network (FFN) in each Transformer block, MoE layers contain multiple "expert" FFNs. A "router" or "gating network" learns to select and activate a small number of these experts (e.g., 2 out of hundreds) for each token or sequence.</li>
+                        <li><strong>Benefits:</strong>
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>Increased Capacity:</strong> Can have trillions of parameters, far more than dense models, as not all parameters are active for every computation.</li>
+                                <li><strong>Reduced Inference Cost:</strong> Only a fraction of the parameters are used per inference, making them potentially faster than dense models of comparable total parameter count.</li>
+                                <li><strong>Specialization:</strong> Different experts can specialize in different types of data or tasks.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Challenges:</strong>
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>Load Balancing:</strong> Ensuring that experts are utilized evenly across devices is crucial for efficient distributed training.</li>
+                                <li><strong>Complexity:</strong> Training and deploying MoE models are more complex than dense models.</li>
+                                <li><strong>Communication Overhead:</strong> Requires efficient communication between devices to route data to the correct experts.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Use Cases:</strong> Ideal for extremely large-scale models where maximizing capacity and efficiency are paramount.</li>
+                        <li><strong>Examples:</strong> Switch Transformer, GLaM, Mixtral 8x7B.</li>
+                    </ul>
+                    <div class="bg-gray-100 p-4 rounded-lg text-sm text-gray-600 italic mb-4">
+                        <strong>Key Difference:</strong> MoE models introduce sparsity at the architectural level, allowing for massive parameter counts while keeping the active parameter count (and thus computational cost) manageable.
+                    </div>
+
+                    <p class="text-gray-700 leading-relaxed">
+                        Choosing the right LLM architecture depends heavily on the specific tasks you intend your model to perform and the computational resources at your disposal. While GPT-2's decoder-only approach is excellent for open-ended text generation, encoder-only models are superior for understanding, encoder-decoder models are the go-to for translation and abstractive summarization, and MoE models push the boundaries of scale.
+                    </p>
+                </section>
+
+                <!-- Navigation Buttons (Bottom) -->
+                <div class="flex justify-between items-center mt-8">
+                    <a href="model_architecture.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="training.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-4 mt-8 text-center text-gray-600 text-sm">
+            &copy; 2025 Your Name/Organization. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

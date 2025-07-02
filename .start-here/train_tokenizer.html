@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Design Your Own Base LLM from Scratch - Training Your Tokenizer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <header class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-center text-blue-700 mb-4">
+                How to Design Your Own Base LLM from Scratch
+            </h1>
+            <p class="text-lg text-center text-gray-600">
+                A comprehensive guide to understanding and building large language models from the ground up.
+            </p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="w-full max-w-4xl flex flex-col lg:flex-row gap-8">
+            <!-- Table of Contents / Navigation -->
+            <nav class="lg:w-1/4 bg-white shadow-lg rounded-xl p-6 sticky top-8 h-fit">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Table of Contents</h2>
+                <ul class="space-y-3">
+                    <li><a href="densemodel.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">1. Introduction to LLMs</a></li>
+                    <li><a href="data_collection.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2. Data Collection and Preprocessing</a></li>
+                    <li><a href="tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.5. Tokenization</a></li>
+                    <li><a href="train_tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.6. Training Your Tokenizer</a></li>
+                    <li><a href="model_architecture.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3. Model Architecture Design</a></li>
+                    <li><a href="training.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">4. Training Your LLM</a></li>
+                    <li><a href="evaluation.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">5. Evaluation and Fine-tuning</a></li>
+                    <li><a href="deployment.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">6. Deployment Considerations</a></li>
+                    <li><a href="conclusion.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">7. Conclusion</a></li>
+                </ul>
+            </nav>
+
+            <!-- Content Sections -->
+            <div class="lg:w-3/4 space-y-8">
+                <!-- Navigation Buttons (Top) -->
+                <div class="flex justify-between items-center mb-6">
+                    <a href="tokenizer.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="model_architecture.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- Section: Training Your Tokenizer -->
+                <section id="train-tokenizer" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">2.6. Training Your Tokenizer</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        While the previous section explained what tokenization is, this section will guide you through the practical steps of training your own subword tokenizer, a critical precursor to training your LLM. The tokenizer needs to be trained on a representative sample of your raw text data to learn the most efficient way to segment words and handle unseen vocabulary.
+                    </p>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">2.6.1 Preparing Your Training Data for the Tokenizer</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The tokenizer training process requires a large corpus of raw text. This should ideally be the same data (or a significant subset of it) that you plan to use for training your LLM.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Raw Text Format:</strong> The data should be in a plain text format, typically one document or sentence per line. Ensure your data is clean and preprocessed (e.g., removed HTML tags, duplicates) as described in the Data Collection and Preprocessing section.</li>
+                        <li><strong>Representative Sample:</strong> It is crucial that the data used for tokenizer training is highly representative of the language, style, and domains your LLM will ultimately encounter. A diverse sample helps the tokenizer learn a robust vocabulary that generalizes well.</li>
+                        <li><strong>Size Matters:</strong> While not as large as the full LLM training corpus, the tokenizer training corpus should still be substantial. For a general-purpose LLM, several gigabytes of text are recommended to capture a comprehensive vocabulary and common subword patterns. Insufficient data can lead to a less effective tokenizer with a higher rate of unknown tokens.</li>
+                    </ul>
+
+                    <h3 class="2xl font-medium text-gray-700 mb-3">2.6.2 Choosing a Tokenization Algorithm and Vocabulary Size</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        As discussed in the <a href="tokenizer.html" class="text-blue-600 hover:text-blue-800 font-medium">Tokenization page</a>, BPE (Byte-Pair Encoding) or its variants are common for GPT-2 style models.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Algorithm:</strong> For a GPT-2 style model, a BPE-based tokenizer, specifically `ByteLevelBPETokenizer`, is the most appropriate choice. This variant handles all Unicode characters by encoding them as bytes, which are then processed by BPE, making it robust to diverse text.</li>
+                        <li><strong>Vocabulary Size:</strong> This is a crucial hyperparameter. A larger vocabulary can represent more words directly, leading to shorter token sequences but increases the embedding layer size and potentially memory usage. Conversely, a smaller vocabulary means more words are broken into subwords, leading to longer sequences but a smaller model footprint. Common sizes for LLMs range from 30,000 to 100,000 tokens. GPT-2 uses 50,257.</li>
+                        <li><strong>Special Tokens:</strong> You must define special tokens that your LLM will use. For GPT-2, the `<|endoftext|>` token is particularly important as it often serves as both the beginning-of-sequence (BOS) and end-of-sequence (EOS) token. You might also consider `[PAD]` for padding sequences to a uniform length, though GPT-2 often uses `<|endoftext|>` for padding as well.</li>
+                        <li><strong>`add_prefix_space`:</strong> For GPT-2, this parameter is typically set to `True`. It means that when a word is tokenized, if it's not the first word in a sentence, a space character is added as a prefix to its token. This helps in reconstructing the original text accurately, especially for languages that use spaces as word separators.</li>
+                        <li><strong>`lowercase`:</strong> GPT-2 models are typically case-sensitive, meaning they distinguish between "The" and "the". Therefore, `lowercase` should generally be set to `False` for a GPT-2 style tokenizer.</li>
+                    </ul>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">2.6.3 Practical Implementation with Hugging Face `tokenizers`</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The Hugging Face `tokenizers` library is a powerful and efficient tool for training custom tokenizers. Here's a conceptual outline of the steps:
+                    </p>
+                    <div class="bg-gray-100 p-4 rounded-lg text-sm text-gray-700 font-mono overflow-x-auto mb-4">
+                        <pre><code>
+# Conceptual Python code using Hugging Face tokenizers library
+from tokenizers import ByteLevelBPETokenizer
+from transformers import PreTrainedTokenizerFast
+
+# 1. Initialize a tokenizer
+# ByteLevelBPETokenizer is good for GPT-2 style models
+# add_prefix_space=True for GPT-2 behavior (handles spaces before words)
+# lowercase=False for GPT-2 (case-sensitive)
+tokenizer = ByteLevelBPETokenizer(
+    add_prefix_space=True,
+    lowercase=False,
+)
+
+# 2. Define special tokens
+# GPT-2 uses <|endoftext|> for both BOS and EOS
+# You might also define a separate PAD token if your training setup requires it.
+special_tokens = ["&lt;|endoftext|&gt;"]
+# If you want a dedicated pad token:
+# special_tokens.append("[PAD]")
+
+# 3. Train the tokenizer on your data files
+# 'files' should be a list of paths to your raw text files.
+# Ensure these files are accessible from where you run this script.
+paths = ["path/to/your/large_text_corpus_part1.txt", "path/to/your/large_text_corpus_part2.txt", ...]
+# You should have a substantial number of text files here.
+
+print(f"Starting tokenizer training on {len(paths)} files...")
+tokenizer.train(
+    files=paths,
+    vocab_size=50257, # Example GPT-2 vocab size. Adjust based on your needs.
+    min_frequency=2, # Minimum frequency for a token to be included in the vocabulary.
+                     # Tokens appearing less than this will be treated as unknown.
+    special_tokens=special_tokens,
+)
+print("Tokenizer training complete.")
+
+# 4. Save the tokenizer files (vocab.json and merges.txt)
+# This will create a directory named "my_llm_tokenizer" containing the necessary files.
+tokenizer_output_dir = "my_llm_tokenizer"
+tokenizer.save_model(tokenizer_output_dir)
+print(f"Tokenizer saved to: {tokenizer_output_dir}")
+
+# 5. Load and test the tokenizer for verification
+# PreTrainedTokenizerFast allows easy integration with Hugging Face Transformers models.
+loaded_tokenizer = PreTrainedTokenizerFast(
+    tokenizer_file=f"{tokenizer_output_dir}/tokenizer.json",
+    # Set special tokens for the loaded tokenizer to match your training.
+    bos_token="&lt;|endoftext|&gt;",
+    eos_token="&lt;|endoftext|&gt;",
+    unk_token="&lt;|endoftext|&gt;", # GPT-2 often maps unknown tokens to endoftext
+    pad_token="&lt;|endoftext|&gt;", # Or use "[PAD]" if you defined one
+)
+
+# Example usage
+text_to_test = "Hello, world! This is a test sentence for your custom LLM tokenizer."
+encoded_output = loaded_tokenizer.encode(text_to_test)
+
+print(f"\nOriginal Text: '{text_to_test}'")
+print(f"Encoded IDs: {encoded_output.ids}")
+print(f"Tokens: {loaded_tokenizer.convert_ids_to_tokens(encoded_output.ids)}")
+print(f"Decoded Text: '{loaded_tokenizer.decode(encoded_output.ids)}'")
+
+# Test with an unknown word
+unknown_text = "This is a supercalifragilisticexpialidocious word."
+encoded_unknown = loaded_tokenizer.encode(unknown_text)
+print(f"\nOriginal Text (unknown word): '{unknown_text}'")
+print(f"Encoded IDs: {encoded_unknown.ids}")
+print(f"Tokens: {loaded_tokenizer.convert_ids_to_tokens(encoded_unknown.ids)}")
+print(f"Decoded Text: '{loaded_tokenizer.decode(encoded_unknown.ids)}'")
+                        </code></pre>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        This process will generate a `tokenizer.json` file (which combines the vocabulary and merge rules) within the specified output directory. This file is crucial for your LLM to convert raw text into numerical inputs and vice-versa during both training and inference.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        Once your tokenizer is trained and saved, you can use it consistently for all subsequent steps, including preparing your pre-training data and for any fine-tuning or inference tasks. A well-trained tokenizer is fundamental for the efficiency and performance of your LLM.
+                    </p>
+                </section>
+
+                <!-- Navigation Buttons (Bottom) -->
+                <div class="flex justify-between items-center mt-8">
+                    <a href="tokenizer.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="model_architecture.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-4 mt-8 text-center text-gray-600 text-sm">
+            &copy; 2025 Your Name/Organization. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

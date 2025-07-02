@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Design Your Own Base LLM from Scratch - Tokenization</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <header class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-center text-blue-700 mb-4">
+                How to Design Your Own Base LLM from Scratch
+            </h1>
+            <p class="text-lg text-center text-gray-600">
+                A comprehensive guide to understanding and building large language models from the ground up.
+            </p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="w-full max-w-4xl flex flex-col lg:flex-row gap-8">
+            <!-- Table of Contents / Navigation -->
+            <nav class="lg:w-1/4 bg-white shadow-lg rounded-xl p-6 sticky top-8 h-fit">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Table of Contents</h2>
+                <ul class="space-y-3">
+                    <li><a href="densemodel.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">1. Introduction to LLMs</a></li>
+                    <li><a href="data_collection.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2. Data Collection and Preprocessing</a></li>
+                    <li><a href="tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.5. Tokenization</a></li>
+                    <li><a href="train_tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.6. Training Your Tokenizer</a></li>
+                    <li><a href="model_architecture.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3. Model Architecture Design</a></li>
+                    <li><a href="training.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">4. Training Your LLM</a></li>
+                    <li><a href="evaluation.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">5. Evaluation and Fine-tuning</a></li>
+                    <li><a href="deployment.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">6. Deployment Considerations</a></li>
+                    <li><a href="conclusion.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">7. Conclusion</a></li>
+                </ul>
+            </nav>
+
+            <!-- Content Sections -->
+            <div class="lg:w-3/4 space-y-8">
+                <!-- Navigation Buttons (Top) -->
+                <div class="flex justify-between items-center mb-6">
+                    <a href="data_collection.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="train_tokenizer.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- Section: Tokenization -->
+                <section id="tokenization" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">2.5. Tokenization</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Tokenization is the process of breaking down raw text into smaller units called "tokens." These tokens are the fundamental building blocks that your LLM will process. The choice of tokenization strategy significantly impacts the model's performance, vocabulary size, and ability to handle out-of-vocabulary words.
+                    </p>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">Why is Tokenization Important?</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Input to Model:</strong> Neural networks, including Transformers, operate on numerical inputs. Tokenization converts text into a sequence of numerical IDs that the model can understand.</li>
+                        <li><strong>Vocabulary Management:</strong> It helps manage the vocabulary size. A smaller, more efficient vocabulary reduces the model's memory footprint and computational complexity.</li>
+                        <li><strong>Handling Unknown Words:</strong> Subword tokenization techniques can represent rare or unseen words by breaking them down into known subword units.</li>
+                        <li><strong>Context Window Utilization:</strong> The length of the tokenized sequence directly relates to the model's context window. Efficient tokenization can allow more information to fit within the fixed context length.</li>
+                    </ul>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">Common Tokenization Algorithms</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        For GPT-2 style models, subword tokenization is standard. The most prominent methods include:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Byte-Pair Encoding (BPE):</strong>
+                            <p class="mb-2">BPE works by iteratively merging the most frequent pairs of characters or character sequences into new, single tokens. It starts with a base vocabulary of individual characters and builds up a vocabulary of common words and subwords. For example, "lowest" might be broken into "low", "est", and then "lowest". GPT-2 uses a variant of BPE.</p>
+                            <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-600 italic">
+                                Example: "unbelievable" -> "un", "believe", "able" (if these subwords are in vocabulary)
+                            </div>
+                        </li>
+                        <li><strong>WordPiece:</strong>
+                            <p class="mt-4 mb-2">Developed by Google, WordPiece is similar to BPE but uses a slightly different merging criterion: it merges the pair of units that maximizes the likelihood of the training data when added to the vocabulary. It's used in models like BERT and DistilBERT.</p>
+                            <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-600 italic">
+                                Example: "tokenization" -> "token", "##ization" (where '##' indicates continuation of a word)
+                            </div>
+                        </li>
+                        <li><strong>SentencePiece (Unigram, BPE):</strong>
+                            <p class="mt-4 mb-2">A language-independent subword tokenizer that can handle raw text directly, including whitespace. It can implement BPE or Unigram language modeling for tokenization. It's often used in models like XLNet and T5.</p>
+                        </li>
+                    </ul>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">Vocabulary Size</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The vocabulary size is the total number of unique tokens the tokenizer can produce. For LLMs, this can range from tens of thousands to hundreds of thousands. A larger vocabulary can capture more specific words but increases the model's size and complexity. GPT-2, for instance, uses a vocabulary size of 50,257.
+                    </p>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">Training Your Tokenizer</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        A tokenizer is typically "trained" on your raw text corpus *before* you train your LLM. This process involves:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Corpus Analysis:</strong> The tokenizer algorithm analyzes the frequency of characters, words, and subword sequences in your training data.</li>
+                        <li><strong>Rule Generation:</strong> Based on the algorithm (e.g., BPE merges), it generates a set of rules or a vocabulary that defines how text will be broken down into tokens.</li>
+                        <li><strong>Special Tokens:</strong> Defining special tokens like `[PAD]` (padding), `[UNK]` (unknown), `[CLS]` (classification), `[SEP]` (separator), and `[BOS]` (beginning of sequence), `[EOS]` (end of sequence) are crucial for various tasks and model behaviors. For generative models like GPT-2, `[BOS]` and `[EOS]` are particularly important.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Libraries like Hugging Face's `tokenizers` provide efficient implementations for training and using these subword tokenizers. For a detailed guide on training your tokenizer, please proceed to the <a href="train_tokenizer.html" class="text-blue-600 hover:text-blue-800 font-medium">Training Your Tokenizer page</a>.
+                    </p>
+                </section>
+
+                <!-- Navigation Buttons (Bottom) -->
+                <div class="flex justify-between items-center mt-8">
+                    <a href="data_collection.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="train_tokenizer.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-4 mt-8 text-center text-gray-600 text-sm">
+            &copy; 2025 Your Name/Organization. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

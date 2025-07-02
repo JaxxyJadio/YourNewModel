@@ -1,0 +1,47 @@
+# Configuration file for YourNewModel
+# This YAML file contains all model, tokenizer, and training hyperparameters
+
+model:
+  name: YourNewModel
+  hidden_dim: 6144  
+  intermediate_dim: 16384
+  activation: gelu
+  num_attention_heads: 32
+  num_key_value_heads: 32
+  num_layers: 24
+  num_heads: 24
+  dropout: 0.1
+  vocab_size: 175000
+  max_position_embeddings: 12088
+  initializer: xavier_uniform
+  gradient_checkpointing: true
+
+tokenizer:
+  type: custom
+  vocab_file: vocab.json
+  unk_token: "<unk>"
+  pad_token: "<pad>"
+  bos_token: "<bos>"
+  eos_token: "<eos>"
+
+data:
+  train_path: "src/YourNewModel/training/YourNewModel/data/Train-gsm8k.jsonl"
+  test_path: "src/YourNewModel/training/YourNewModel/data/Test-gsm8k.jsonl"
+  batch_size: 32
+  num_workers: 4
+
+training:
+  epochs: 10
+  learning_rate: 3e-4
+  weight_decay: 0.01
+  grad_clip: 1.0
+  lr_scheduler: cosine
+  mixed_precision: true
+  checkpoint_dir: "checkpoints/"
+  log_interval: 50
+  save_interval: 1
+  distributed: true
+
+logging:
+  log_dir: "logs/"
+  log_level: "INFO"

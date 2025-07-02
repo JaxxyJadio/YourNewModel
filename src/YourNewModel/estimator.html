@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YourNewModel Model Card</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8fafc; color: #222; margin: 0; padding: 2rem; }
+    .container { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; max-width: 700px; margin: auto; padding: 2rem; }
+    h1 { color: #2563eb; }
+    h2 { color: #1e293b; margin-top: 2rem; }
+    code, pre { background: #f1f5f9; border-radius: 4px; padding: 2px 6px; }
+    .config-table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    .config-table th, .config-table td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+    .config-table th { background: #f1f5f9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>YourNewModel Model Card</h1>
+    <p><strong>Release Date:</strong> July 1, 2025</p>
+    <h2>Model Overview</h2>
+    <ul>
+      <li><strong>Architecture:</strong> Dense Transformer (from scratch, modular PyTorch)</li>
+      <li><strong>Tokenizer:</strong> BPE (Byte Pair Encoding), trained on 736,671+ unique samples</li>
+      <li><strong>Data:</strong> Combined and deduplicated from all available JSONL datasets</li>
+      <li><strong>Intended Use:</strong> General-purpose language modeling, code, and reasoning tasks</li>
+    </ul>
+    <h2>Configuration</h2>
+    <table class="config-table">
+      <tr><th>Parameter</th><th>Value</th></tr>
+      <tr><td>Vocabulary Size</td><td>Configurable (e.g., 50,000+)</td></tr>
+      <tr><td>Max Sequence Length</td><td>8192</td></tr>
+      <tr><td>Hidden Dimension</td><td>2048</td></tr>
+      <tr><td>Layers</td><td>24</td></tr>
+      <tr><td>Attention Heads</td><td>24</td></tr>
+      <tr><td>Dropout</td><td>0.1 (attn/embd/resid)</td></tr>
+      <tr><td>Activation</td><td>GELU (new)</td></tr>
+      <tr><td>Layer Norm Epsilon</td><td>1e-5</td></tr>
+      <tr><td>Initializer Range</td><td>0.02</td></tr>
+      <tr><td>Mixed Precision</td><td>Supported (torch.cuda.amp)</td></tr>
+      <tr><td>Gradient Checkpointing</td><td>Supported</td></tr>
+    </table>
+    <h2>Training Details</h2>
+    <ul>
+      <li>Single and multi-GPU (distributed) training supported</li>
+      <li>Mixed precision, gradient clipping, and learning rate scheduling</li>
+      <li>Comprehensive checkpointing and resume support</li>
+      <li>Efficient data streaming and batching for large datasets</li>
+    </ul>
+    <h2>Tokenizer Details</h2>
+    <ul>
+      <li>All JSONL datasets recursively combined and deduplicated</li>
+      <li>736,671+ unique training samples</li>
+      <li>Full BPE merge process, no artificial sample limits</li>
+    </ul>
+    <h2>License</h2>
+    <p>MIT License (see <code>LICENSE</code> file)</p>
+    <h2>Contact</h2>
+    <p>For questions or contributions, open an issue or contact the maintainers.</p>
+  </div>
+</body>
+</html>

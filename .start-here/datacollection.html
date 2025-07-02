@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Design Your Own Base LLM from Scratch - Data Collection</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <header class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-center text-blue-700 mb-4">
+                How to Design Your Own Base LLM from Scratch
+            </h1>
+            <p class="text-lg text-center text-gray-600">
+                A comprehensive guide to understanding and building large language models from the ground up.
+            </p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="w-full max-w-4xl flex flex-col lg:flex-row gap-8">
+            <!-- Table of Contents / Navigation -->
+            <nav class="lg:w-1/4 bg-white shadow-lg rounded-xl p-6 sticky top-8 h-fit">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Table of Contents</h2>
+                <ul class="space-y-3">
+                    <li><a href="densemodel.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">1. Introduction to LLMs</a></li>
+                    <li><a href="data_collection.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2. Data Collection and Preprocessing</a></li>
+                    <li><a href="tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.5. Tokenization</a></li>
+                    <li><a href="train_tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.6. Training Your Tokenizer</a></li>
+                    <li><a href="model_architecture.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3. Model Architecture Design</a></li>
+                    <li><a href="training.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">4. Training Your LLM</a></li>
+                    <li><a href="evaluation.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">5. Evaluation and Fine-tuning</a></li>
+                    <li><a href="deployment.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">6. Deployment Considerations</a></li>
+                    <li><a href="conclusion.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">7. Conclusion</a></li>
+                </ul>
+            </nav>
+
+            <!-- Content Sections -->
+            <div class="lg:w-3/4 space-y-8">
+                <!-- Navigation Buttons (Top) -->
+                <div class="flex justify-between items-center mb-6">
+                    <a href="densemodel.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="tokenizer.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- Section 2: Data Collection and Preprocessing -->
+                <section id="data-collection" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">2. Data Collection and Preprocessing</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The bedrock of any successful LLM is its training data. A high-quality, diverse, and massive dataset is crucial for the model to learn robust language representations.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">2.1 Data Collection Strategies</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Web Crawls:</strong> Utilizing tools like Common Crawl or building custom crawlers to gather vast amounts of text from the internet (e.g., Wikipedia, news articles, forums, blogs).</li>
+                        <li><strong>Books and Literature:</strong> Incorporating digitized books, academic papers, and literary works to expose the model to formal language and diverse topics.</li>
+                        <li><strong>Conversational Data:</strong> Including dialogue from chatbots, social media, or transcribed speech to improve conversational abilities.</li>
+                        <li><strong>Code Repositories:</strong> For models intended to understand or generate code, integrating public codebases (e.g., GitHub) is essential.</li>
+                        <li><strong>Multilingual Data:</strong> If aiming for a multilingual LLM, collecting data across various languages is necessary.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The scale of data required for a base LLM can range from hundreds of gigabytes to several terabytes.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">2.2 Data Preprocessing Techniques</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Raw text data is often noisy and inconsistent. Preprocessing transforms this raw data into a clean, structured format suitable for model training.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Text Cleaning:</strong> Removing HTML tags, special characters, irrelevant metadata, and boilerplate text. Handling emojis and non-standard characters.</li>
+                        <li><strong>Deduplication:</strong> Identifying and removing duplicate or near-duplicate documents or passages to prevent overfitting and improve training efficiency.</li>
+                        <li><strong>Normalization:</strong> Converting text to a consistent format (e.g., lowercase, handling contractions, standardizing numbers).</li>
+                        <li><strong>Filtering:</strong> Removing low-quality content, short documents, or documents with a high proportion of non-textual elements.</li>
+                        <li><strong>Shuffling:</strong> Randomizing the order of documents or sentences to ensure the model doesn't learn spurious correlations based on data order.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Effective preprocessing significantly impacts the final model's performance, robustness, and generalization capabilities. For a detailed explanation of tokenization, please proceed to the <a href="tokenizer.html" class="text-blue-600 hover:text-blue-800 font-medium">Tokenization page</a>.
+                    </p>
+                </section>
+
+                <!-- Navigation Buttons (Bottom) -->
+                <div class="flex justify-between items-center mt-8">
+                    <a href="densemodel.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="tokenizer.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-4 mt-8 text-center text-gray-600 text-sm">
+            &copy; 2025 Your Name/Organization. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

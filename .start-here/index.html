@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Design Your Own Base LLM from Scratch</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <header class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-center text-blue-700 mb-4">
+                How to Design Your Own Base LLM from Scratch
+            </h1>
+            <p class="text-lg text-center text-gray-600">
+                A comprehensive guide to understanding and building large language models from the ground up.
+            </p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="w-full max-w-4xl flex flex-col lg:flex-row gap-8">
+            <!-- Table of Contents / Navigation -->
+            <nav class="lg:w-1/4 bg-white shadow-lg rounded-xl p-6 sticky top-8 h-fit">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Table of Contents</h2>
+                <ul class="space-y-3">
+                    <li><a href="#introduction" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">1. Introduction to LLMs</a></li>
+                    <li><a href="#data-collection" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2. Data Collection and Preprocessing</a></li>
+                    <li><a href="#model-architecture" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3. Model Architecture Design</a></li>
+                    <li><a href="#training" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">4. Training Your LLM</a></li>
+                    <li><a href="#evaluation" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">5. Evaluation and Fine-tuning</a></li>
+                    <li><a href="#deployment" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">6. Deployment Considerations</a></li>
+                    <li><a href="#conclusion" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">7. Conclusion</a></li>
+                </ul>
+            </nav>
+
+            <!-- Content Sections -->
+            <div class="lg:w-3/4 space-y-8">
+                <!-- Navigation Buttons (Top) -->
+                <div class="flex justify-between items-center mb-6">
+                    <!-- Placeholder for a previous page, linking back to itself for now -->
+                    <a href="densemodel.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <!-- Placeholder for a next page -->
+                    <a href="next_page.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- Section 1: Introduction -->
+                <section id="introduction" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">1. Introduction to LLMs</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Large Language Models (LLMs) represent a significant leap in artificial intelligence, demonstrating remarkable capabilities in understanding, generating, and interacting with human language. These models, typically built on transformer architectures, are trained on colossal amounts of text data, allowing them to learn complex patterns, grammar, semantics, and even some world knowledge.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Designing your own base LLM from scratch is an ambitious but incredibly rewarding endeavor. It provides a deep, hands-on understanding of the intricate components and processes involved, from data curation to model deployment. This guide aims to demystify the journey, breaking down the complex task into manageable steps.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        We will cover the theoretical underpinnings, practical considerations, and key decisions you'll face at each stage of developing your own large language model. Prepare to delve into the fascinating world of natural language processing and machine learning at scale.
+                    </p>
+                </section>
+
+                <!-- Section 2: Data Collection and Preprocessing -->
+                <section id="data-collection" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">2. Data Collection and Preprocessing</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The bedrock of any successful LLM is its training data. A high-quality, diverse, and massive dataset is crucial for the model to learn robust language representations.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">2.1 Data Collection Strategies</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Web Crawls:</strong> Utilizing tools like Common Crawl or building custom crawlers to gather vast amounts of text from the internet (e.g., Wikipedia, news articles, forums, blogs).</li>
+                        <li><strong>Books and Literature:</strong> Incorporating digitized books, academic papers, and literary works to expose the model to formal language and diverse topics.</li>
+                        <li><strong>Conversational Data:</strong> Including dialogue from chatbots, social media, or transcribed speech to improve conversational abilities.</li>
+                        <li><strong>Code Repositories:</strong> For models intended to understand or generate code, integrating public codebases (e.g., GitHub) is essential.</li>
+                        <li><strong>Multilingual Data:</strong> If aiming for a multilingual LLM, collecting data across various languages is necessary.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The scale of data required for a base LLM can range from hundreds of gigabytes to several terabytes.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">2.2 Data Preprocessing Techniques</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Raw text data is often noisy and inconsistent. Preprocessing transforms this raw data into a clean, structured format suitable for model training.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Text Cleaning:</strong> Removing HTML tags, special characters, irrelevant metadata, and boilerplate text. Handling emojis and non-standard characters.</li>
+                        <li><strong>Deduplication:</strong> Identifying and removing duplicate or near-duplicate documents or passages to prevent overfitting and improve training efficiency.</li>
+                        <li><strong>Normalization:</strong> Converting text to a consistent format (e.g., lowercase, handling contractions, standardizing numbers).</li>
+                        <li><strong>Tokenization:</strong> Breaking down text into smaller units (tokens). This can be word-level, subword-level (e.g., Byte-Pair Encoding (BPE), WordPiece), or character-level. Subword tokenization is preferred for LLMs as it handles out-of-vocabulary words and reduces vocabulary size.</li>
+                        <li><strong>Filtering:</strong> Removing low-quality content, short documents, or documents with a high proportion of non-textual elements.</li>
+                        <li><strong>Shuffling:</strong> Randomizing the order of documents or sentences to ensure the model doesn't learn spurious correlations based on data order.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Effective preprocessing significantly impacts the final model's performance, robustness, and generalization capabilities.
+                    </p>
+                </section>
+
+                <!-- Section 3: Model Architecture Design -->
+                <section id="model-architecture" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">3. Model Architecture Design</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The Transformer architecture, introduced in "Attention Is All You Need," forms the backbone of modern LLMs. It eschews recurrent and convolutional layers in favor of attention mechanisms.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">3.1 Key Components of a Transformer</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Embeddings:</strong>
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>Token Embeddings:</strong> Converting discrete tokens into continuous vector representations.</li>
+                                <li><strong>Positional Embeddings:</strong> Adding information about the position of tokens in a sequence, as transformers process tokens in parallel without inherent sequential understanding. This can be learned or fixed (e.g., sinusoidal).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Encoder-Decoder vs. Decoder-Only:</strong>
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>Encoder-Decoder (e.g., T5, BART):</strong> Suitable for sequence-to-sequence tasks like translation or summarization.</li>
+                                <li><strong>Decoder-Only (e.g., GPT series):</strong> Predominantly used for generative LLMs, as they are designed for autoregressive generation (predicting the next token based on previous ones).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Multi-Head Self-Attention:</strong> The core mechanism. It allows the model to weigh the importance of different words in the input sequence when processing each word. "Multi-head" means multiple attention mechanisms run in parallel, capturing different aspects of relationships.</li>
+                        <li><strong>Feed-Forward Networks:</strong> A simple, fully connected neural network applied independently to each position in the sequence after the attention mechanism.</li>
+                        <li><strong>Layer Normalization and Residual Connections:</strong> Crucial for stable training of deep networks. Layer normalization normalizes the inputs across features, and residual connections help gradients flow through the network.</li>
+                    </ul>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">3.2 Scaling and Hyperparameters</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The "large" in LLM refers to the number of parameters, which can range from billions to trillions. Key hyperparameters influencing model size and performance include:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Number of Layers (L):</strong> The depth of the network (e.g., 12, 24, 48, 96).</li>
+                        <li><strong>Hidden Dimension (d_model):</strong> The dimensionality of the token embeddings and the output of the attention layers (e.g., 768, 1024, 2048, 4096).</li>
+                        <li><strong>Number of Attention Heads (H):</strong> Typically `d_model / H` is a small integer (e.g., 12, 16, 32).</li>
+                        <li><strong>Feed-Forward Inner Dimension (d_ff):</strong> Often `4 * d_model`.</li>
+                        <li><strong>Vocabulary Size:</strong> Determined by your tokenization strategy.</li>
+                        <li><strong>Context Window (Max Sequence Length):</strong> The maximum number of tokens the model can process at once (e.g., 512, 1024, 2048, 4096, up to 128k or more).</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Designing the architecture involves balancing computational resources, desired performance, and the complexity of the tasks the LLM is intended for.
+                    </p>
+                </section>
+
+                <!-- Section 4: Training Your LLM -->
+                <section id="training" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">4. Training Your LLM</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Training a base LLM is an incredibly resource-intensive process, demanding significant computational power and careful optimization.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">4.1 Training Objectives</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Causal Language Modeling (CLM):</strong> The most common objective for generative LLMs (e.g., GPT). The model predicts the next token in a sequence given all previous tokens. This objective naturally trains the model for text generation.</li>
+                        <li><strong>Masked Language Modeling (MLM):</strong> (e.g., BERT, RoBERTa) The model predicts masked tokens in a sequence based on their context (both left and right). While useful for understanding, it's less direct for generation.</li>
+                        <li><strong>Mixture of Denoising Objectives:</strong> (e.g., T5) Training the model to reconstruct corrupted text, which can include masking spans of text or shuffling sentences.</li>
+                    </ul>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">4.2 Optimization and Training Strategies</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Optimizer:</strong> AdamW is a popular choice, often combined with a learning rate scheduler.</li>
+                        <li><strong>Learning Rate Schedule:</strong> Critical for stable training. A common approach is a warm-up phase (gradually increasing learning rate) followed by a decay (e.g., cosine decay).</li>
+                        <li><strong>Batch Size:</strong> Large batch sizes are often used to maximize GPU utilization, but effective batch size can be achieved through gradient accumulation.</li>
+                        <li><strong>Gradient Accumulation:</strong> Simulating larger batch sizes by accumulating gradients over several mini-batches before performing a single weight update.</li>
+                        <li><strong>Mixed-Precision Training:</strong> Using lower-precision floating-point formats (e.g., FP16 or BF16) for calculations to reduce memory usage and speed up training, while keeping a master copy of weights in full precision.</li>
+                        <li><strong>Distributed Training:</strong>
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>Data Parallelism:</strong> Each device holds a full copy of the model and processes a different subset of the data. Gradients are then averaged.</li>
+                                <li><strong>Model Parallelism (e.g., Pipeline Parallelism, Tensor Parallelism):</strong> The model itself is split across multiple devices, allowing for training of models larger than a single device's memory.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Checkpointing:</strong> Regularly saving the model's weights and optimizer state to resume training in case of interruptions.</li>
+                        <li><strong>Monitoring:</strong> Closely tracking loss, perplexity, and other metrics to identify issues and optimize training.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Training an LLM requires careful resource management, robust infrastructure, and a deep understanding of distributed computing.
+                    </p>
+                </section>
+
+                <!-- Section 5: Evaluation and Fine-tuning -->
+                <section id="evaluation" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">5. Evaluation and Fine-tuning</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        After the pre-training phase, evaluating your base LLM and adapting it for specific tasks are crucial steps.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">5.1 Evaluation Metrics and Benchmarks</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Perplexity:</strong> A common intrinsic metric for language models, measuring how well the model predicts a sample of text. Lower perplexity indicates better performance.</li>
+                        <li><strong>Extrinsic Task-Specific Metrics:</strong>
+                            <ul class="list-circle list-inside ml-6">
+                                <li><strong>BLEU/ROUGE:</strong> For generation tasks like summarization or translation, comparing generated text to reference text.</li>
+                                <li><strong>F1-score/Accuracy:</strong> For classification or question answering tasks.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Human Evaluation:</strong> Essential for assessing subjective qualities like coherence, fluency, factual accuracy, and helpfulness, which are hard to capture with automated metrics.</li>
+                        <li><strong>Benchmarks:</strong> Evaluating on established datasets like GLUE, SuperGLUE, MMLU, or HELM provides a standardized way to compare your model's performance against others.</li>
+                    </ul>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">5.2 Fine-tuning Strategies</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        While a base LLM learns general language understanding, fine-tuning adapts it to specific downstream tasks or domains with smaller, task-specific datasets.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Full Fine-tuning:</strong> Updating all parameters of the pre-trained model on the new task. This is effective but computationally expensive.</li>
+                        <li><strong>Parameter-Efficient Fine-tuning (PEFT):</strong> Techniques like LoRA (Low-Rank Adaptation) or Prefix-Tuning that update only a small subset of parameters or add new, small trainable layers, significantly reducing computational cost and memory.</li>
+                        <li><strong>Instruction Tuning:</strong> Fine-tuning on datasets formatted as instructions and demonstrations, enabling the model to follow instructions more effectively.</li>
+                        <li><strong>Reinforcement Learning from Human Feedback (RLHF):</strong> A crucial step for aligning LLMs with human preferences and values, often used to reduce harmful outputs and improve helpfulness. This involves training a reward model and then using RL to optimize the LLM.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Fine-tuning allows you to leverage the broad knowledge acquired during pre-training and specialize your LLM for practical applications.
+                    </p>
+                </section>
+
+                <!-- Section 6: Deployment Considerations -->
+                <section id="deployment" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">6. Deployment Considerations</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Bringing your trained LLM into a production environment involves several critical steps to ensure efficiency, scalability, and reliability.
+                    </p>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">6.1 Model Optimization for Inference</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Quantization:</strong> Reducing the precision of model weights (e.g., from FP32 to FP16, INT8, or even INT4) to decrease model size and memory footprint, leading to faster inference with minimal performance degradation.</li>
+                        <li><strong>Pruning:</strong> Removing less important weights or connections from the model to reduce its size and computational requirements.</li>
+                        <li><strong>Distillation:</strong> Training a smaller "student" model to mimic the behavior of a larger "teacher" model, resulting in a more efficient model for deployment.</li>
+                        <li><strong>Graph Optimization:</strong> Using tools like ONNX Runtime or TensorFlow Lite to optimize the computational graph for faster execution on target hardware.</li>
+                    </ul>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">6.2 Serving Frameworks and Infrastructure</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Hugging Face Transformers:</strong> Provides easy-to-use pipelines for inference and integration with various serving solutions.</li>
+                        <li><strong>TensorFlow Serving / PyTorch Serve:</strong> Robust frameworks for deploying machine learning models as scalable APIs.</li>
+                        <li><strong>NVIDIA Triton Inference Server:</strong> A high-performance inference serving solution that supports multiple frameworks and dynamic batching.</li>
+                        <li><strong>Cloud-based ML Platforms:</strong> Services like Google Cloud AI Platform, AWS SageMaker, or Azure Machine Learning offer managed solutions for deploying and scaling LLMs.</li>
+                        <li><strong>API Design:</strong> Designing a clear, efficient API for your LLM that handles input/output formatting, error handling, and authentication.</li>
+                    </ul>
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">6.3 Scalability, Latency, and Cost</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Scalability:</strong> Designing your deployment to handle varying loads, potentially using auto-scaling groups or serverless functions.</li>
+                        <li><strong>Latency:</strong> Minimizing the time it takes for the model to generate a response, crucial for real-time applications. Techniques include batching requests, optimizing hardware, and using faster models.</li>
+                        <li><strong>Cost-Effectiveness:</strong> Balancing performance with infrastructure costs, especially given the high computational demands of LLMs. This involves choosing appropriate hardware and optimizing model size.</li>
+                    </ul>
+                    <p class="text-gray-700 leading-relaxed">
+                        Successful deployment ensures your LLM is accessible, performs efficiently under load, and delivers value to end-users.
+                    </p>
+                </section>
+
+                <!-- Section 7: Conclusion -->
+                <section id="conclusion" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">7. Conclusion</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Designing and building a base Large Language Model from scratch is a monumental undertaking that encompasses a wide array of disciplines, from massive-scale data engineering to intricate neural network architecture design and distributed systems. This guide has provided a foundational roadmap, touching upon the critical stages: data collection and preprocessing, model architecture design, the intensive training process, rigorous evaluation and fine-tuning, and finally, the considerations for deploying your model.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The journey of creating an LLM offers unparalleled insights into the current frontiers of artificial intelligence. It challenges your understanding of computational efficiency, data management, and the nuances of language itself. While the resources required can be substantial, the knowledge gained is invaluable.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        We encourage you to delve deeper into each of these areas, experiment with different techniques, and contribute to the rapidly evolving field of large language models. The future of AI is being shaped by those who dare to build from the ground up, and your venture into designing your own LLM is a significant step in that direction. Happy building!
+                    </p>
+                </section>
+
+                <!-- Navigation Buttons (Bottom) -->
+                <div class="flex justify-between items-center mt-8">
+                    <!-- Placeholder for a previous page, linking back to itself for now -->
+                    <a href="densemodel.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <!-- Placeholder for a next page -->
+                    <a href="next_page.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-4 mt-8 text-center text-gray-600 text-sm">
+            &copy; 2025 Your Name/Organization. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

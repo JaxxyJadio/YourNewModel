@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Design Your Own Base LLM from Scratch - GSM8K Dataset</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Header Section -->
+        <header class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-6 mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold text-center text-blue-700 mb-4">
+                How to Design Your Own Base LLM from Scratch
+            </h1>
+            <p class="text-lg text-center text-gray-600">
+                A comprehensive guide to understanding and building large language models from the ground up.
+            </p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="w-full max-w-4xl flex flex-col lg:flex-row gap-8">
+            <!-- Table of Contents / Navigation -->
+            <nav class="lg:w-1/4 bg-white shadow-lg rounded-xl p-6 sticky top-8 h-fit">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Table of Contents</h2>
+                <ul class="space-y-3">
+                    <li><a href="densemodel.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">1. Introduction to LLMs</a></li>
+                    <li><a href="data_collection.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2. Data Collection and Preprocessing</a></li>
+                    <li><a href="tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.5. Tokenization</a></li>
+                    <li><a href="train_tokenizer.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">2.6. Training Your Tokenizer</a></li>
+                    <li><a href="model_architecture.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3. Model Architecture Design</a></li>
+                    <li><a href="othertypesofmodels.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">3.5. Other LLM Architectures</a></li>
+                    <li><a href="training.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">4. Training Your LLM</a></li>
+                    <li><a href="evaluation.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">5. Evaluation and Fine-tuning</a></li>
+                    <li><a href="gsm8k.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">5.5. GSM8K Dataset for Math Reasoning</a></li>
+                    <li><a href="deployment.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">6. Deployment Considerations</a></li>
+                    <li><a href="conclusion.html" class="block text-blue-600 hover:text-blue-800 font-medium transition duration-300 ease-in-out rounded-md p-2 hover:bg-blue-50">7. Conclusion</a></li>
+                </ul>
+            </nav>
+
+            <!-- Content Sections -->
+            <div class="lg:w-3/4 space-y-8">
+                <!-- Navigation Buttons (Top) -->
+                <div class="flex justify-between items-center mb-6">
+                    <a href="evaluation.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="deployment.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+
+                <!-- Section 5.5: GSM8K Dataset for Math Reasoning -->
+                <section id="gsm8k-dataset" class="bg-white shadow-lg rounded-xl p-6">
+                    <h2 class="text-3xl font-semibold text-gray-700 mb-4">5.5. GSM8K Dataset for Math Reasoning</h2>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        While LLMs excel at language tasks, their ability to perform complex multi-step reasoning, especially in mathematics, is a critical area of research. The <strong>GSM8K (Grade School Math 8K)</strong> dataset is specifically designed to evaluate and train models on grade-school level math word problems. It's an excellent resource for developing LLMs that can not only understand language but also perform logical and numerical reasoning.
+                    </p>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">What is GSM8K?</h3>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>Composition:</strong> GSM8K consists of 8,500 high-quality, linguistically diverse grade school math word problems. Each problem comes with a question and a step-by-step solution that leads to the final answer.</li>
+                        <li><strong>Complexity:</strong> The problems require multi-step reasoning and basic arithmetic operations (addition, subtraction, multiplication, division). They are designed to be challenging for models that only rely on superficial pattern matching.</li>
+                        <li><strong>Purpose:</strong> It serves as a benchmark for evaluating the mathematical reasoning capabilities of LLMs. Training on this dataset can significantly improve a model's ability to solve similar problems.</li>
+                    </ul>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">Using GSM8K: Train and Test Files</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The GSM8K dataset is typically split into two main files: `train.jsonl` and `test.jsonl`.
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 leading-relaxed mb-4 pl-4">
+                        <li><strong>`train.jsonl` (Training File):</strong>
+                            <p class="mb-2">This file contains the majority of the problems (7,500 problems). You will use this data to fine-tune your pre-trained LLM. The goal is to teach your model to generate the correct step-by-step solution given a problem, and ultimately the correct answer.</p>
+                            <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-600 italic">
+                                <strong>Instruction:</strong> When fine-tuning, you'll typically format each entry as an input-output pair. For example, the input could be the problem statement, and the output could be the step-by-step solution followed by the final answer. This teaches the model to "think aloud" or show its work, which often improves performance.
+                            </div>
+                        </li>
+                        <li><strong>`test.jsonl` (Testing File):</strong>
+                            <p class="mt-4 mb-2">This file contains the remaining problems (1,000 problems). This data is held out and should *not* be used during training or fine-tuning. It is exclusively for evaluating your model's performance on unseen math problems.</p>
+                            <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-600 italic">
+                                <strong>Instruction:</strong> After fine-tuning, you will feed the problems from `test.jsonl` to your model and compare its generated solutions/answers against the ground truth. Metrics like exact match accuracy (for the final answer) or a more lenient metric for solution steps can be used.
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3 class="text-2xl font-medium text-gray-700 mb-3">Example Data Format (from `train.jsonl` or `test.jsonl`)</h3>
+                    <div class="bg-gray-100 p-4 rounded-lg text-sm text-gray-700 font-mono overflow-x-auto mb-4">
+                        <pre><code>
+{
+  "question": "Natalia sold clips to 48 of her friends. She sold 3 clips to each friend. How many clips did she sell in all?",
+  "answer": "Natalia sold 3 clips to each friend and she had 48 friends. So in total she sold 3 * 48 = 144 clips.\nThe final answer is 144."
+}
+                        </code></pre>
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">
+                        By leveraging the GSM8K dataset, you can specifically enhance your LLM's capabilities in mathematical reasoning, moving beyond purely linguistic tasks towards more complex problem-solving.
+                    </p>
+                </section>
+
+                <!-- Navigation Buttons (Bottom) -->
+                <div class="flex justify-between items-center mt-8">
+                    <a href="evaluation.html" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-300 transition duration-300 ease-in-out flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous Page
+                    </a>
+                    <a href="deployment.html" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out flex items-center">
+                        Next Page
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="w-full max-w-4xl bg-white shadow-lg rounded-xl p-4 mt-8 text-center text-gray-600 text-sm">
+            &copy; 2025 Your Name/Organization. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+Project Utility Scripts
+This document provides instructions for using two Python scripts designed to help manage your LLM project files.
+
+1. rename_project.py
+This script allows you to easily rename a specific string across multiple file types (.html, .py, .json, .yaml) within your project directory. It's particularly useful for globally changing a project or model name.
+
+What it does:
+
+Recursively searches for files with .html, .py, .json, and .yaml extensions.
+
+Replaces all occurrences of the string "YourNewModel" with a new name you provide.
+
+How to use it:
+
+Save the script: Save the provided Python code as rename_project.py in the root directory of your project (or any convenient location).
+
+Open your terminal/command prompt.
+
+Navigate to the directory where you saved rename_project.py.
+
+Run the script using one of the following commands:
+
+To rename in the current directory:
+
+python rename_project.py "MyAwesomeLLM"
+
+(Replace "MyAwesomeLLM" with your desired new name.)
+
+To rename in a specific subdirectory:
+
+python rename_project.py "MyCustomLLM" --path ./path/to/your/project/folder
+
+(Replace "MyCustomLLM" with your desired new name and ./path/to/your/project/folder with the actual path.)
+
+Example Output:
+
+Welcome to YourNewModel! Please select a name!
+
+Attempting to rename 'YourNewModel' to 'MyAwesomeLLM' in files under '.'...
+Renamed 'YourNewModel' to 'MyAwesomeLLM' in: densemodel.html
+Renamed 'YourNewModel' to 'MyAwesomeLLM' in: training.py
+Successfully renamed 'YourNewModel' to 'MyAwesomeLLM' in 2 files.
+
+Script finished.
+
+2. remove_docstrings.py
+This script helps clean up your Python code by removing docstrings from .py files. This can be useful for reducing file size or for specific deployment scenarios where docstrings are not needed.
+
+What it does:
+
+Parses Python (.py) files.
+
+Identifies and removes triple-quoted strings ("""Docstring""" or '''Docstring''') that are typically used as docstrings at the module, class, function, or method level.
+
+How to use it:
+
+Save the script: Save the provided Python code as remove_docstrings.py in a convenient location.
+
+Open your terminal/command prompt.
+
+Navigate to the directory where you saved remove_docstrings.py.
+
+Run the script using one of the following commands:
+
+To remove docstrings from a single Python file:
+
+python remove_docstrings.py my_module.py
+
+(Replace my_module.py with the path to your Python file.)
+
+To remove docstrings from all Python files in a directory (and its subdirectories):
+
+python remove_docstrings.py ./path/to/your/python_code_folder
+
+(Replace ./path/to/your/python_code_folder with the actual path to your folder.)
+
+To remove docstrings from all Python files in the current directory (and its subdirectories):
+
+python remove_docstrings.py
+
+Important Notes:
+
+Backup your files: Always create a backup of your project before running scripts that modify files, especially remove_docstrings.py, as it directly alters your code.
+
+Regex limitations: The remove_docstrings.py script uses regular expressions, which are heuristic. While generally effective, they might not perfectly distinguish between docstrings and other triple-quoted strings in all complex edge cases. For the most robust docstring removal, using a Python AST (Abstract Syntax Tree) parser would be necessary, but this script provides a good starting point.
